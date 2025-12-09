@@ -7,15 +7,29 @@ using System.Threading.Tasks;
 
 namespace Othello
 {
+    /// <summary>
+    /// Bot che sceglie la mossa catturando il maggior numero possibile di pedine
+    /// in base allo stato corrente del tabellone.
+    /// </summary>
     public class Bot1
     {
         /*
-         * il Bot1 calcola, ad ogni turno, il numero
+         * Il Bot1 calcola, ad ogni turno, il numero
          * di pedine che può trasformare con ogni mossa,
          * eseguendo quella che permette di acquisire 
-         * più pedine
+         * più pedine.
          */
 
+        /// <summary>
+        /// Determina e restituisce la mossa migliore disponibile per il bot,
+        /// ovvero quella che cattura il maggior numero di pedine.
+        /// </summary>
+        /// <param name="tabellone">Istanza del tabellone di gioco.</param>
+        /// <param name="colorePedina">Colore del bot (1 o 2).</param>
+        /// <returns>
+        /// Una tupla (x, y) contenente la coordinata della mossa scelta.
+        /// Restituisce (-1, -1) se non ci sono mosse valide.
+        /// </returns>
         public (int, int) effettuaMossa(Tabellone tabellone, int colorePedina)
         {
             int[,] statoTabellone = tabellone.getTabellone();
@@ -28,7 +42,6 @@ namespace Othello
                 {
                     if (tabellone.verificaMossa(colorePedina, x, y))
                     {
-                        //calcola quante pedine trasforma questa mossa
                         int catturate = calcolaCatture(statoTabellone, colorePedina, x, y);
                         if (catturate > maxPedine)
                         {
@@ -42,23 +55,21 @@ namespace Othello
             return (mossaX, mossaY);
         }
 
-
-
+        /// <summary>
+        /// Calcola quante pedine verrebbero catturate posizionando
+        /// una pedina del colore specificato nella cella indicata.
+        /// </summary>
+        /// <param name="statoTabellone">Matrice 8x8 che rappresenta il tabellone corrente.</param>
+        /// <param name="colorePedina">Colore del giocatore.</param>
+        /// <param name="x">Coordinata X della mossa.</param>
+        /// <param name="y">Coordinata Y della mossa.</param>
+        /// <returns>Il numero totale di pedine catturate con quella mossa.</returns>
         private int calcolaCatture(int[,] statoTabellone, int colorePedina, int x, int y)
         {
             int catturate = 0;
 
-            int coloreAvversario;
-            if (colorePedina == 1)
-            {
-                coloreAvversario = 2;
-            }
-            else
-            {
-                coloreAvversario = 1;
-            }
+            int coloreAvversario = colorePedina == 1 ? 2 : 1;
 
-            
             int[] dx = { -1, -1, -1, 0, 0, 1, 1, 1 };
             int[] dy = { -1, 0, 1, -1, 1, -1, 0, 1 };
 
@@ -68,7 +79,6 @@ namespace Othello
                 int j = y + dy[dir];
                 int cattureTemporanee = 0;
 
-                //conta le pedine dell'avversario in questa direzione
                 while (i >= 0 && i < 8 && j >= 0 && j < 8 && statoTabellone[i, j] == coloreAvversario)
                 {
                     cattureTemporanee++;
@@ -76,7 +86,6 @@ namespace Othello
                     j += dy[dir];
                 }
 
-                //aggiunge le pedine al conteggio totale se la sequenza è valida
                 if (i >= 0 && i < 8 && j >= 0 && j < 8 && statoTabellone[i, j] == colorePedina)
                 {
                     catturate += cattureTemporanee;
@@ -86,5 +95,4 @@ namespace Othello
             return catturate;
         }
     }
-
 }
